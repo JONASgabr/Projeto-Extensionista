@@ -1,0 +1,119 @@
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <style>
+        .button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: 1px solid #007bff;
+            background-color: white;
+            color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Gerenciamento de Pedidos</h1>
+
+    <form method="POST">
+        <fieldset>
+            <legend>Número da Mesa:</legend>
+            <div id="mesas">
+                {% for i in range(1, 13) %}
+                    <button type="button" class="button" onclick="selectOption('mesa', {{ i }})">Mesa {{ i }}</button>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Produto:</legend>
+            <div id="produtos">
+                <button type="button" class="button" onclick="selectOption('produto', 'Produto A')">Produto A</button>
+                <button type="button" class="button" onclick="selectOption('produto', 'Produto B')">Produto B</button>
+                <button type="button" class="button" onclick="selectOption('produto', 'Produto C')">Produto C</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Quantidade:</legend>
+            <div class="quantity-control">
+                <button type="button" class="button" onclick="decreaseQuantity()">-</button>
+                <input type="number" id="quantidade" name="quantidade" value="1" min="1" required readonly>
+                <button type="button" class="button" onclick="increaseQuantity()">+</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Garçom:</legend>
+            <div id="garcons">
+                {% for i in range(1, 5) %}
+                    <button type="button" class="button" onclick="selectOption('garcom', {{ i }})">Garçom {{ i }}</button>
+                {% endfor %}
+            </div>
+        </fieldset>
+        
+        <input type="hidden" name="mesa" id="selected-mesa" required>
+        <input type="hidden" name="produto" id="selected-produto" required>
+        <input type="hidden" name="garcom" id="selected-garcom" required>
+
+        <button type="submit" class="button">Adicionar Pedido</button>
+    </form>
+
+    <h2>Pedidos em Aberto</h2>
+    <ul>
+        {% for pedido in pedidos %}
+            <li>
+                Mesa {{ pedido.mesa }}: {{ pedido.quantidade }}x {{ pedido.produto }} - Garçom {{ pedido.garcom }}
+                <form method="POST" action="{{ url_for('encerrar', pedido_id=pedido.id) }}" style="display:inline;">
+                    <button type="submit" class="button">Encerrar</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        let quantity = 1;
+
+        function increaseQuantity() {
+            quantity++;
+            document.getElementById('quantidade').value = quantity;
+        }
+        
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('quantidade').value = quantity;
+            }
+        }
+
+        function selectOption(type, value) {
+            document.getElementById('selected-' + type).value = value;
+
+            // Remover seleção anterior
+            const buttons = document.querySelectorAll('#' + type + 's .button');
+            buttons.forEach(button => {
+                button.classList.remove('selected');
+            });
+
+            // Adicionar classe 'selected' ao botão clicado
+            const selectedButton = Array.from(buttons).find(button => button.innerText.includes(value));
+            if (selectedButton) {
+                selectedButton.classList.add('selected');
+            }
+        }
+    </script>
+</body>
+</html>
