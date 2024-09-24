@@ -1,0 +1,63 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class RestauranteApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Sistema de Pedidos - Irmãos Baggio LTDA")
+        self.create_widgets()
+
+    def create_widgets(self):
+        # Título
+        title_label = tk.Label(self.root, text="Sistema de Gerenciamento de Pedidos", font=("Helvetica", 16))
+        title_label.pack(pady=10)
+
+        # Mesa
+        self.mesa_label = tk.Label(self.root, text="Número da Mesa:")
+        self.mesa_label.pack(pady=5)
+        self.mesa_entry = tk.Entry(self.root)
+        self.mesa_entry.pack(pady=5)
+
+        # Produto
+        self.produto_label = tk.Label(self.root, text="Produto:")
+        self.produto_label.pack(pady=5)
+        self.produto_entry = tk.Entry(self.root)
+        self.produto_entry.pack(pady=5)
+
+        # Quantidade
+        self.quantidade_label = tk.Label(self.root, text="Quantidade:")
+        self.quantidade_label.pack(pady=5)
+        self.quantidade_entry = tk.Entry(self.root)
+        self.quantidade_entry.pack(pady=5)
+
+        # Botão de Adicionar Pedido
+        self.add_button = tk.Button(self.root, text="Adicionar Pedido", command=self.adicionar_pedido)
+        self.add_button.pack(pady=20)
+
+        # Lista de Pedidos
+        self.pedidos_label = tk.Label(self.root, text="Pedidos:", font=("Helvetica", 14))
+        self.pedidos_label.pack(pady=10)
+        self.pedidos_listbox = tk.Listbox(self.root, width=50)
+        self.pedidos_listbox.pack(pady=10)
+
+    def adicionar_pedido(self):
+        mesa = self.mesa_entry.get()
+        produto = self.produto_entry.get()
+        quantidade = self.quantidade_entry.get()
+
+        if mesa and produto and quantidade.isdigit():
+            pedido = f"Mesa {mesa}: {quantidade}x {produto}"
+            self.pedidos_listbox.insert(tk.END, pedido)
+            self.clear_entries()
+        else:
+            messagebox.showwarning("Entrada inválida", "Por favor, preencha todos os campos corretamente.")
+
+    def clear_entries(self):
+        self.mesa_entry.delete(0, tk.END)
+        self.produto_entry.delete(0, tk.END)
+        self.quantidade_entry.delete(0, tk.END)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = RestauranteApp(root)
+    root.mainloop()

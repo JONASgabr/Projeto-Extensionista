@@ -1,0 +1,15 @@
+<script>
+    fetch('/pedidos')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  // Exibe os pedidos no console
+            const pedidosList = document.getElementById('pedidos-list');
+            pedidosList.innerHTML = ''; // Limpa a lista anterior
+            data.forEach(pedido => {
+                const li = document.createElement('li');
+                li.textContent = `Produto: ${pedido[1]}, Quantidade: ${pedido[2]}`; // Ajuste conforme sua tabela
+                pedidosList.appendChild(li);
+            });
+        })
+        .catch(error => console.error('Erro ao buscar pedidos:', error));
+</script>
